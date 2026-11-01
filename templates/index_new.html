@@ -1,0 +1,441 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambodia Rain Prediction - Neural Network System</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="container mt-4">
+        <div class="hero-section">
+            <h1 class="hero-title">
+                <i class="fas fa-cloud-rain me-3"></i>
+                Cambodia Rain Prediction
+            </h1>
+            <p class="hero-subtitle">
+                Advanced Neural Network System for Weather Forecasting
+            </p>
+            <div class="weather-animation">
+                <div class="cloud"></div>
+                <div class="cloud"></div>
+                <div class="raindrops">
+                    <div class="raindrop"></div>
+                    <div class="raindrop"></div>
+                    <div class="raindrop"></div>
+                    <div class="raindrop"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prediction Section -->
+    <div class="container">
+        <div class="glass-card">
+            <div class="row">
+                <div class="col-12">                    <h2 class="text-center mb-4 text-gradient">Make Weather Prediction</h2>
+                    <p class="text-center text-muted mb-4">Enter the 10 weather parameters below to get a rain prediction</p>
+                </div>
+            </div>
+            
+            <form id="predictionForm">
+                {% csrf_token %}
+                <div class="row">
+                    <!-- Temperature & Humidity Parameters -->
+                    <div class="col-md-6">
+                        <div class="form-section">
+                            <h5 class="section-title">
+                                <i class="fas fa-thermometer-half"></i>
+                                Temperature & Humidity
+                            </h5>
+                            
+                            <div class="form-group">
+                                <label for="temperature" class="form-label">Temperature (°C)</label>
+                                <input type="number" class="form-control" id="temperature" 
+                                       min="-20" max="50" step="0.1" value="25.0" placeholder="Enter temperature" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="feels_like_max" class="form-label">Feels Like Max (°C)</label>
+                                <input type="number" class="form-control" id="feels_like_max" 
+                                       min="-20" max="60" step="0.1" value="30.0" placeholder="Enter feels like max" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="dew_point" class="form-label">Dew Point (°C)</label>
+                                <input type="number" class="form-control" id="dew_point" 
+                                       min="-30" max="40" step="0.1" value="20.0" placeholder="Enter dew point" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="humidity" class="form-label">Humidity (%)</label>
+                                <input type="number" class="form-control" id="humidity" 
+                                       min="0" max="100" step="0.1" value="65.0" placeholder="Enter humidity" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="cloud_cover" class="form-label">Cloud Cover (%)</label>
+                                <input type="number" class="form-control" id="cloud_cover" 
+                                       min="0" max="100" step="0.1" value="50.0" placeholder="Enter cloud cover" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pressure & Wind Parameters -->
+                    <div class="col-md-6">
+                        <div class="form-section">
+                            <h5 class="section-title">
+                                <i class="fas fa-wind"></i>
+                                Pressure & Wind
+                            </h5>
+                            
+                            <div class="form-group">
+                                <label for="sea_level_pressure" class="form-label">Sea Level Pressure (inHg)</label>
+                                <input type="number" class="form-control" id="sea_level_pressure" 
+                                       min="28" max="32" step="0.01" value="30.0" placeholder="Enter pressure" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="wind_speed" class="form-label">Wind Speed (mph)</label>
+                                <input type="number" class="form-control" id="wind_speed" 
+                                       min="0" max="100" step="0.1" value="10.0" placeholder="Enter wind speed" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="wind_direction" class="form-label">Wind Direction (degrees)</label>
+                                <input type="number" class="form-control" id="wind_direction" 
+                                       min="0" max="360" step="1" value="180" placeholder="Enter wind direction" required>
+                            </div>
+                              <div class="form-group">
+                                <label for="wind_gust" class="form-label">Wind Gust (mph)</label>
+                                <input type="number" class="form-control" id="wind_gust" 
+                                       min="0" max="150" step="0.1" value="15.0" placeholder="Enter wind gust" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="visibility" class="form-label">Visibility (miles)</label>
+                                <input type="number" class="form-control" id="visibility" 
+                                       min="0" max="50" step="0.1" value="15.0" placeholder="Enter visibility" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button type="button" class="btn btn-outline-secondary me-2" id="fillDemo">
+                        <i class="fas fa-flask me-2"></i>Demo Data
+                    </button>
+                    <button type="submit" class="btn-predict">
+                        <i class="fas fa-brain me-2"></i>Predict Rain
+                    </button>
+                    <button type="button" class="btn btn-outline-danger ms-2" id="clearResults">
+                        <i class="fas fa-eraser me-2"></i>Clear
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Results Section -->
+        <div class="results-section">
+            <div class="glass-card">
+                <h3 class="section-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Prediction Results
+                </h3>
+                
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="metric-card">
+                            <div class="metric-value" id="probabilityValue">--</div>
+                            <div class="metric-label">Rain Probability</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="metric-card">
+                            <div class="metric-value" id="predictionValue">--</div>
+                            <div class="metric-label">Prediction</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="metric-card">
+                            <div class="metric-value" id="confidenceValue">--</div>
+                            <div class="metric-label">Confidence</div>
+                            <div class="confidence-progress">
+                                <div class="progress-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <button type="button" class="btn btn-outline-success" id="exportResults">
+                        <i class="fas fa-download me-2"></i>Export Results
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Model Information -->
+        <div class="glass-card">
+            <div class="model-info">
+                <h4 class="section-title">
+                    <i class="fas fa-brain"></i>
+                    Model Information
+                </h4>
+                <div class="info-item">
+                    <span class="info-label">Model Type:</span>
+                    <span class="info-value">3-Layer Neural Network</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Input Features:</span>
+                    <span class="info-value">10 Weather Parameters</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Architecture:</span>
+                    <span class="info-value">Dense → Sigmoid → Dense → Sigmoid → Dense → Sigmoid</span>
+                </div>
+            </div>
+        </div>
+    </div><!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3"></div>    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+      <!-- Custom JavaScript -->
+    <script src="{% static 'js/app.js' %}"></script>
+    
+    <!-- Emergency Fix Script -->
+    <script src="{% static 'js/emergency_fix_v2.js' %}"></script>
+      <!-- Enhanced Debugging Script -->
+    <script>
+        console.log('Enhanced debug script loaded');
+        
+        // Test API endpoint function
+        function testAPI() {
+            console.log('Testing API endpoint...');
+            
+            const testData = {
+                temperature: 25.0,
+                feels_like_max: 30.0,
+                dew_point: 20.0,
+                humidity: 65.0,
+                cloud_cover: 50.0,
+                sea_level_pressure: 30.0,
+                wind_speed: 10.0,
+                wind_direction: 180,
+                wind_gust: 15.0,
+                visibility: 15.0
+            };
+            
+            // Get CSRF token
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            console.log('CSRF Token:', csrfToken);
+            
+            fetch('/api/predict/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(testData)
+            })
+            .then(response => {
+                console.log('API Response status:', response.status);
+                console.log('API Response ok:', response.ok);
+                return response.json();
+            })
+            .then(data => {
+                console.log('API Response data:', data);
+            })
+            .catch(error => {
+                console.error('API Test error:', error);
+            });
+        }
+        
+        // Simple direct prediction test function
+        function directPredictionTest() {
+            console.log('=== DIRECT PREDICTION TEST ===');
+            
+            // Get form values
+            const formData = {
+                temperature: parseFloat(document.getElementById('temperature').value),
+                feels_like_max: parseFloat(document.getElementById('feels_like_max').value),
+                dew_point: parseFloat(document.getElementById('dew_point').value),
+                humidity: parseFloat(document.getElementById('humidity').value),
+                cloud_cover: parseFloat(document.getElementById('cloud_cover').value),
+                sea_level_pressure: parseFloat(document.getElementById('sea_level_pressure').value),
+                wind_speed: parseFloat(document.getElementById('wind_speed').value),
+                wind_direction: parseFloat(document.getElementById('wind_direction').value),
+                wind_gust: parseFloat(document.getElementById('wind_gust').value),
+                visibility: parseFloat(document.getElementById('visibility').value)
+            };
+            
+            console.log('Direct test form data:', formData);
+            
+            // Check for NaN values
+            const hasNaN = Object.values(formData).some(val => isNaN(val));
+            if (hasNaN) {
+                console.error('Form contains invalid values:', formData);
+                alert('Please fill all fields with valid numbers');
+                return;
+            }
+            
+            // Get CSRF token
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            // Show loading
+            const predictBtn = document.querySelector('.btn-predict');
+            const originalText = predictBtn.innerHTML;
+            predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Predicting...';
+            predictBtn.disabled = true;
+            
+            // Make API call
+            fetch('/api/predict/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Prediction successful:', data);
+                
+                // Update UI with results
+                document.getElementById('probabilityValue').textContent = Math.round(data.rain_probability * 100) + '%';
+                document.getElementById('predictionValue').textContent = data.prediction_result;
+                document.getElementById('confidenceValue').textContent = Math.round(data.confidence * 100) + '%';
+                
+                // Update progress bar
+                const progressBar = document.querySelector('.confidence-progress .progress-bar');
+                if (progressBar) {
+                    progressBar.style.width = Math.round(data.confidence * 100) + '%';
+                }
+                
+                alert('Prediction completed successfully!');
+            })
+            .catch(error => {
+                console.error('Prediction failed:', error);
+                alert('Prediction failed: ' + error.message);
+            })
+            .finally(() => {
+                // Reset button
+                predictBtn.innerHTML = originalText;
+                predictBtn.disabled = false;
+            });
+        }
+        
+        // Add extra event listener for debugging
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded');
+            
+            const form = document.getElementById('predictionForm');
+            const predictBtn = document.querySelector('.btn-predict');
+            
+            console.log('Form element:', form);
+            console.log('Predict button:', predictBtn);
+              // Add test API button to page
+            const testApiBtn = document.createElement('button');
+            testApiBtn.textContent = 'Test API';
+            testApiBtn.type = 'button';
+            testApiBtn.className = 'btn btn-warning me-2';
+            testApiBtn.onclick = testAPI;
+            
+            // Add direct prediction test button
+            const directTestBtn = document.createElement('button');
+            directTestBtn.textContent = 'Direct Test';
+            directTestBtn.type = 'button';
+            directTestBtn.className = 'btn btn-info me-2';
+            directTestBtn.onclick = directPredictionTest;
+            
+            // Insert test buttons next to predict button
+            if (predictBtn && predictBtn.parentNode) {
+                predictBtn.parentNode.insertBefore(testApiBtn, predictBtn);
+                predictBtn.parentNode.insertBefore(directTestBtn, predictBtn);
+            }
+              // Add direct click handler for debugging
+            if (predictBtn) {
+                predictBtn.addEventListener('click', function(e) {
+                    console.log('Predict button clicked directly');
+                    console.log('Event:', e);
+                    console.log('Event type:', e.type);
+                    console.log('Button type:', predictBtn.type);
+                    console.log('Form valid:', form?.checkValidity());
+                    
+                    // If this is a submit button, prevent default and use our direct test
+                    if (predictBtn.type === 'submit') {
+                        e.preventDefault();
+                        console.log('Preventing form submission, using direct test instead');
+                        directPredictionTest();
+                        return;
+                    }
+                    
+                    // Test form submission manually for button clicks
+                    if (form && form.checkValidity()) {
+                        console.log('Form is valid, attempting manual prediction...');
+                        
+                        // Collect form data manually
+                        const formData = {
+                            temperature: parseFloat(document.getElementById('temperature').value),
+                            feels_like_max: parseFloat(document.getElementById('feels_like_max').value),
+                            dew_point: parseFloat(document.getElementById('dew_point').value),
+                            humidity: parseFloat(document.getElementById('humidity').value),
+                            cloud_cover: parseFloat(document.getElementById('cloud_cover').value),
+                            sea_level_pressure: parseFloat(document.getElementById('sea_level_pressure').value),
+                            wind_speed: parseFloat(document.getElementById('wind_speed').value),
+                            wind_direction: parseFloat(document.getElementById('wind_direction').value),
+                            wind_gust: parseFloat(document.getElementById('wind_gust').value),
+                            visibility: parseFloat(document.getElementById('visibility').value)
+                        };
+                        
+                        console.log('Manual form data:', formData);
+                        
+                        // Check if any values are NaN
+                        const hasNaN = Object.values(formData).some(val => isNaN(val));
+                        console.log('Has NaN values:', hasNaN);
+                        
+                        if (!hasNaN) {
+                            directPredictionTest();
+                        }
+                    }
+                });
+            }
+              // Check if app is initialized
+            if (window.rainApp) {
+                console.log('RainApp instance found:', window.rainApp);
+            } else {
+                console.log('No rainApp instance found');
+                
+                // Try to initialize manually
+                setTimeout(() => {
+                    try {
+                        window.rainApp = new RainPredictionApp();
+                        console.log('RainApp manually initialized');
+                    } catch (error) {
+                        console.error('Error initializing rainApp:', error);
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

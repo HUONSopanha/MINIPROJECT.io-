@@ -1,0 +1,2206 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambodia Rain Prediction - Neural Network System</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+      <!-- Custom CSS -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    
+    <!-- Professional White Theme CSS -->
+    <style>
+        /* Professional White Theme - Override all previous styles */
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --accent-color: #3b82f6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #06b6d4;
+            --light-gray: #f8fafc;
+            --medium-gray: #e2e8f0;
+            --dark-gray: #374151;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --white: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--white) !important;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            color: var(--text-primary) !important;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--white) !important;
+            border-bottom: 1px solid var(--medium-gray);
+            box-shadow: var(--shadow);
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: var(--primary-color) !important;
+        }
+
+        .navbar-toggler {
+            border: 1px solid var(--medium-gray);
+        }        /* Enhanced Hero Section with Advanced Styling */        .hero-section {
+            text-align: center;
+            padding: 5rem 0 6rem 0;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 35%, #f1f5f9 100%);
+            position: relative;
+            overflow: hidden;
+            border-radius: 0 0 3rem 3rem;
+            margin-bottom: 4rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            z-index: 0;
+        }
+
+        /* Multi-layered Background Animation */
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(37, 99, 235, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 10%, rgba(16, 185, 129, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 10% 90%, rgba(139, 92, 246, 0.05) 0%, transparent 30%),
+                radial-gradient(circle at 90% 20%, rgba(236, 72, 153, 0.05) 0%, transparent 35%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="%23e2e8f0" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');            opacity: 0.6;
+            z-index: -2;
+            animation: backgroundPulse 12s ease-in-out infinite;
+        }        /* Rotating Gradient Overlay with Multiple Colors */
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(
+                from 0deg at 50% 50%, 
+                transparent 0deg, 
+                rgba(37, 99, 235, 0.06) 60deg,
+                rgba(6, 182, 212, 0.06) 120deg,
+                rgba(16, 185, 129, 0.06) 180deg,
+                rgba(139, 92, 246, 0.06) 240deg,
+                rgba(236, 72, 153, 0.06) 300deg,
+                transparent 360deg
+            );
+            animation: rotate 150s linear infinite;
+            z-index: -1;
+        }        /* Add floating particle effect */
+        .hero-section .hero-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, rgba(37, 99, 235, 0.4), transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(6, 182, 212, 0.4), transparent),
+                radial-gradient(1px 1px at 90px 40px, rgba(16, 185, 129, 0.4), transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(139, 92, 246, 0.4), transparent),
+                radial-gradient(2px 2px at 160px 30px, rgba(236, 72, 153, 0.4), transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: float 20s ease-in-out infinite, particleShift 8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -3;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% { 
+                opacity: 0.6; 
+                transform: scale(1) rotate(0deg);
+            }
+            25% { 
+                opacity: 0.8; 
+                transform: scale(1.01) rotate(0.5deg);
+            }
+            50% { 
+                opacity: 0.7; 
+                transform: scale(1.02) rotate(0deg);
+            }
+            75% { 
+                opacity: 0.9; 
+                transform: scale(1.01) rotate(-0.5deg);
+            }
+        }
+
+        @keyframes particleShift {
+            0%, 100% { 
+                transform: translateX(0px) translateY(0px); 
+            }
+            25% { 
+                transform: translateX(5px) translateY(-3px); 
+            }
+            50% { 
+                transform: translateX(-3px) translateY(5px); 
+            }
+            75% { 
+                transform: translateX(3px) translateY(-2px); 
+            }
+        }        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }        .hero-content {
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-title {
+            color: var(--text-primary) !important;
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 50%, #1e40af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: drop-shadow(0 0 10px rgba(37, 99, 235, 0.3));
+            }
+            to {
+                filter: drop-shadow(0 0 20px rgba(37, 99, 235, 0.5));
+            }
+        }
+
+        .hero-subtitle {
+            color: var(--text-secondary) !important;
+            font-size: 1.375rem;
+            font-weight: 500;
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            margin-top: 4rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.9s both;
+        }
+
+        .hero-stat {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-stat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .hero-stat:hover::before {
+            left: 100%;
+        }
+
+        .hero-stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .hero-stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            position: relative;
+            z-index: 1;
+        }        .hero-cta {
+            margin-top: 3rem;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .btn-hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
+            color: var(--white);
+            border: none;
+            padding: 1.25rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.125rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.4s ease;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-hero:hover::before {
+            left: 100%;
+        }
+
+        .btn-hero:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.5);
+            color: var(--white);
+        }
+
+        .btn-hero:active {
+            transform: translateY(-1px) scale(1.02);
+        }        /* Enhanced Weather Animation with 3D Effects */
+        .weather-animation {
+            position: relative;
+            height: 140px;
+            margin: 3.5rem auto;
+            width: 350px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 25px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            animation: fadeInUp 1s ease-out 0.6s both, weatherGlow 6s ease-in-out infinite alternate;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .weather-animation:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 
+                0 15px 45px rgba(0, 0, 0, 0.15),
+                inset 0 1px 2px rgba(255, 255, 255, 0.9);
+        }
+
+        @keyframes weatherGlow {
+            0% {
+                box-shadow: 
+                    0 8px 32px rgba(0, 0, 0, 0.1), 
+                    0 0 20px rgba(37, 99, 235, 0.1),
+                    inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            }
+            33% {
+                box-shadow: 
+                    0 8px 32px rgba(0, 0, 0, 0.1), 
+                    0 0 25px rgba(6, 182, 212, 0.15),
+                    inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            }
+            66% {
+                box-shadow: 
+                    0 8px 32px rgba(0, 0, 0, 0.1), 
+                    0 0 30px rgba(16, 185, 129, 0.12),
+                    inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            }
+            100% {
+                box-shadow: 
+                    0 8px 32px rgba(0, 0, 0, 0.1), 
+                    0 0 35px rgba(139, 92, 246, 0.18),
+                    inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            }
+        }
+
+        /* Rotating background inside weather animation */
+        .weather-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                from 0deg, 
+                transparent 0deg, 
+                rgba(37, 99, 235, 0.03) 45deg,
+                rgba(6, 182, 212, 0.03) 90deg,
+                rgba(16, 185, 129, 0.03) 135deg,
+                rgba(139, 92, 246, 0.03) 180deg,
+                rgba(236, 72, 153, 0.03) 225deg,
+                rgba(251, 191, 36, 0.03) 270deg,
+                rgba(239, 68, 68, 0.03) 315deg,
+                transparent 360deg
+            );
+            animation: rotate 45s linear infinite;
+            z-index: 0;
+        }
+
+        /* Add secondary rotating layer */
+        .weather-animation::after {
+            content: '';
+            position: absolute;
+            top: -25%;
+            left: -25%;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(
+                circle at center,
+                transparent 30%,
+                rgba(37, 99, 235, 0.02) 40%,
+                rgba(6, 182, 212, 0.02) 50%,
+                rgba(16, 185, 129, 0.02) 60%,
+                transparent 70%
+            );
+            animation: rotate 30s linear infinite reverse;
+            z-index: 0;
+        }        .cloud {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%);
+            border: 2px solid rgba(226, 232, 240, 0.8);
+            border-radius: 50px;
+            width: 90px;
+            height: 45px;
+            position: absolute;
+            animation: float 6s ease-in-out infinite;
+            box-shadow: 
+                0 6px 20px rgba(0, 0, 0, 0.15),
+                inset 0 1px 3px rgba(255, 255, 255, 0.8);
+            z-index: 2;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+            transition: all 0.3s ease;
+        }
+
+        .cloud:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.2),
+                inset 0 1px 3px rgba(255, 255, 255, 0.9);
+        }
+
+        .cloud::before {
+            content: '';
+            position: absolute;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            width: 55px;
+            height: 35px;
+            border-radius: 50px;
+            top: -18px;
+            left: 12px;
+            border: 2px solid rgba(226, 232, 240, 0.6);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.1),
+                inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            animation: cloudPuff 4s ease-in-out infinite;
+        }
+
+        .cloud::after {
+            content: '';
+            position: absolute;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            width: 45px;
+            height: 30px;
+            border-radius: 50px;
+            top: -12px;
+            right: 18px;
+            border: 2px solid rgba(226, 232, 240, 0.6);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.1),
+                inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            animation: cloudPuff 4s ease-in-out infinite 0.5s;
+        }
+
+        @keyframes cloudPuff {
+            0%, 100% { 
+                transform: scale(1); 
+                opacity: 1;
+            }
+            50% { 
+                transform: scale(1.05); 
+                opacity: 0.9;
+            }
+        }
+
+        .cloud:first-child {
+            left: 40px;
+            top: 25px;
+            animation: float 5s ease-in-out infinite, cloudDrift 15s ease-in-out infinite;
+        }
+
+        .cloud:nth-child(2) {
+            right: 40px;
+            top: 15px;
+            animation-delay: -2.5s;
+            transform: scale(0.85);
+            animation: float 7s ease-in-out infinite -2.5s, cloudDrift 18s ease-in-out infinite -5s;
+        }
+
+        @keyframes cloudDrift {
+            0%, 100% { 
+                transform: translateX(0px) translateY(0px) scale(1); 
+            }
+            25% { 
+                transform: translateX(8px) translateY(-2px) scale(1.02); 
+            }
+            50% { 
+                transform: translateX(12px) translateY(2px) scale(1.05); 
+            }
+            75% { 
+                transform: translateX(5px) translateY(-3px) scale(1.03); 
+            }
+        }
+
+        .raindrop {
+            width: 4px;
+            height: 18px;
+            background: linear-gradient(
+                180deg, 
+                rgba(6, 182, 212, 0.9) 0%, 
+                rgba(8, 145, 178, 1) 50%,
+                rgba(6, 95, 180, 1) 100%
+            );
+            border-radius: 0 0 50% 50%;
+            position: absolute;
+            animation: rain 2s linear infinite;
+            opacity: 0;
+            box-shadow: 
+                0 2px 6px rgba(6, 182, 212, 0.4),
+                inset 0 0 2px rgba(255, 255, 255, 0.3);
+            z-index: 1;
+            top: 60px;
+        }
+
+        /* Enhanced raindrop variations */
+        .raindrop:nth-child(3) { 
+            left: 80px; 
+            animation-delay: 0s; 
+            width: 3px; 
+            height: 16px;
+        }
+        .raindrop:nth-child(4) { 
+            left: 120px; 
+            animation-delay: 0.3s; 
+            width: 5px; 
+            height: 20px;
+        }
+        .raindrop:nth-child(5) { 
+            left: 160px; 
+            animation-delay: 0.6s; 
+            width: 4px; 
+            height: 17px;
+        }
+        .raindrop:nth-child(6) { 
+            left: 200px; 
+            animation-delay: 0.9s; 
+            width: 3px; 
+            height: 19px;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) scale(1) rotate(0deg); 
+                filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+            }
+            33% { 
+                transform: translateY(-12px) scale(1.03) rotate(1deg); 
+                filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.15));
+            }
+            66% { 
+                transform: translateY(-20px) scale(1.06) rotate(-1deg); 
+                filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.2));
+            }
+        }
+
+        @keyframes rain {
+            0% { 
+                transform: translateY(-25px) scale(0.8); 
+                opacity: 0; 
+            }
+            10% { 
+                opacity: 1; 
+                transform: translateY(-20px) scale(1);
+            }
+            80% { 
+                opacity: 1; 
+                transform: translateY(85px) scale(1);
+            }
+            90% { 
+                opacity: 0.7; 
+                transform: translateY(90px) scale(0.9);
+            }
+            100% { 
+                transform: translateY(95px) scale(0.6); 
+                opacity: 0; 
+            }
+        }
+
+        /* Cards */        .glass-card {
+            background: var(--white) !important;
+            border: 1px solid var(--medium-gray);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        .glass-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        /* Typography */
+        .text-gradient {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+        }
+
+        .section-title {
+            color: var(--text-primary) !important;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        /* Forms */
+        .form-section {
+            background: var(--light-gray);
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            color: var(--text-primary) !important;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            background: var(--white) !important;
+            border: 1px solid var(--medium-gray) !important;
+            border-radius: 6px;
+            color: var(--text-primary) !important;
+            font-size: 0.875rem;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+            background: var(--white) !important;
+        }
+
+        .form-control::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Buttons */
+        .btn-predict {
+            background: var(--primary-color) !important;
+            border: none;
+            color: var(--white) !important;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-predict:hover {
+            background: #1d4ed8 !important;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-outline-secondary {
+            border: 1px solid var(--medium-gray) !important;
+            color: var(--text-secondary) !important;
+            background: var(--white) !important;
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--light-gray) !important;
+            border-color: var(--secondary-color) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .btn-outline-danger {
+            border: 1px solid var(--danger-color) !important;
+            color: var(--danger-color) !important;
+            background: var(--white) !important;
+        }
+
+        .btn-outline-danger:hover {
+            background: var(--danger-color) !important;
+            color: var(--white) !important;
+        }
+
+        .btn-outline-primary {
+            border: 1px solid var(--primary-color) !important;
+            color: var(--primary-color) !important;
+            background: var(--white) !important;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary-color) !important;
+            color: var(--white) !important;
+        }
+
+        .btn-outline-success {
+            border: 1px solid var(--success-color) !important;
+            color: var(--success-color) !important;
+            background: var(--white) !important;
+        }
+
+        .btn-outline-success:hover {
+            background: var(--success-color) !important;
+            color: var(--white) !important;
+        }
+
+        /* Metric Cards */
+        .metric-card {
+            background: var(--light-gray);
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color) !important;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        /* Progress Bar */
+        .confidence-progress {
+            background: var(--medium-gray);
+            border-radius: 4px;
+            height: 6px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: var(--success-color);
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* Alerts */
+        .alert {
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            background: var(--light-gray) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .alert-info {
+            border-color: var(--info-color);
+            background: rgba(6, 182, 212, 0.1) !important;
+        }
+
+        .alert-heading {
+            color: var(--text-primary) !important;
+            font-weight: 600;
+        }
+
+        /* Tables */
+        .history-table {
+            background: var(--white);
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table {
+            color: var(--text-primary) !important;
+            margin-bottom: 0;
+        }
+
+        .table th {
+            background: var(--light-gray) !important;
+            color: var(--text-primary) !important;
+            font-weight: 600;
+            border-bottom: 1px solid var(--medium-gray);
+            padding: 1rem;
+        }
+
+        .table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+            color: var(--text-primary) !important;
+        }
+
+        .table-hover tbody tr:hover {
+            background: var(--light-gray) !important;
+        }
+
+        /* Model Info */
+        .model-info {
+            background: var(--light-gray);
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: var(--text-primary) !important;
+            font-weight: 600;
+        }
+
+        /* Statistics */
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color) !important;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary) !important;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Loading Spinner */
+        .spinner-border {
+            color: var(--primary-color) !important;
+        }
+
+        /* Toast */
+        .toast {
+            background: var(--white) !important;
+            border: 1px solid var(--medium-gray);
+            color: var(--text-primary) !important;
+        }
+
+        .toast-header {
+            background: var(--light-gray) !important;
+            color: var(--text-primary) !important;
+            border-bottom: 1px solid var(--medium-gray);
+        }        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+                padding: 0 1rem;
+            }
+            
+            .hero-stats {
+                gap: 1.5rem;
+            }
+            
+            .hero-stat-number {
+                font-size: 1.5rem;
+            }
+            
+            .weather-animation {
+                width: 250px;
+                height: 100px;
+            }
+            
+            .glass-card {
+                padding: 1.5rem;
+            }
+            
+            .form-section {
+                padding: 1rem;
+            }
+            
+            .btn-hero {
+                padding: 0.875rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .hero-stats .hero-stat {
+                display: inline-block;
+                margin: 0 1rem;
+            }
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Enhanced Focus States */
+        .btn-hero:focus,
+        .form-control:focus,
+        .btn:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Utility Classes */
+        .text-muted {
+            color: var(--text-secondary) !important;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        /* Override any remaining purple/dark backgrounds */
+        .container, .row, .col-md-6, .col-md-4, .col-12 {
+            background: transparent !important;
+        }
+
+        /* Ensure all text is visible on white background */
+        h1, h2, h3, h4, h5, h6, p, span, div, label, input, button, td, th {
+            color: var(--text-primary) !important;
+        }
+
+        /* Specific overrides for better contrast */
+        .navbar-dark .navbar-brand {
+            color: var(--primary-color) !important;
+        }
+
+        .navbar-dark .navbar-nav .nav-link {
+            color: var(--text-secondary) !important;
+        }
+
+        /* Remove any animated backgrounds */
+        body::before,
+        body::after,
+        .container::before,
+        .container::after {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fas fa-cloud-rain me-2"></i>
+                Cambodia Rain Prediction
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'home' %}">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'model_info' %}">
+                            <i class="fas fa-brain me-1"></i>Model Info
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/test/">
+                            <i class="fas fa-flask me-1"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>    <!-- Enhanced Hero Section -->
+    <div class="container-fluid">
+        <div class="hero-section">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <i class="fas fa-cloud-rain me-3"></i>
+                        Cambodia Rain Prediction
+                    </h1>
+                    <p class="hero-subtitle">
+                        Advanced Neural Network System for Accurate Weather Forecasting.<br>
+                        Predict rainfall with 10 key weather parameters using state-of-the-art AI technology.
+                    </p>
+                      <div class="weather-animation">
+                        <div class="cloud"></div>
+                        <div class="cloud"></div>
+                        <div class="raindrop"></div>
+                        <div class="raindrop"></div>
+                        <div class="raindrop"></div>
+                        <div class="raindrop"></div>
+                    </div>
+
+                    <div class="hero-cta">
+                        <a href="#predictionForm" class="btn-hero">
+                            <i class="fas fa-brain me-2"></i>
+                            Start Prediction
+                        </a>
+                    </div>
+
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">3</span>
+                            <span class="hero-stat-label">Neural Layers</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">10</span>
+                            <span class="hero-stat-label">Input Parameters</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">95%</span>
+                            <span class="hero-stat-label">Accuracy Rate</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">24/7</span>
+                            <span class="hero-stat-label">Available</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    <!-- Prediction Section -->
+    <div class="container" id="predictionForm">
+        <div class="glass-card">
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-center mb-5">
+                        <h2 class="text-gradient mb-3">
+                            <i class="fas fa-calculator me-2"></i>
+                            Make Weather Prediction
+                        </h2>
+                        <p class="text-muted mb-4">Enter the 10 weather parameters below to get an accurate rain prediction using our advanced neural network model</p>
+                        <div class="d-inline-flex align-items-center bg-light px-3 py-2 rounded-pill">
+                            <i class="fas fa-info-circle text-primary me-2"></i>
+                            <small class="text-secondary">All fields are required for prediction</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+              <form id="predictionForm" method="POST" action="/api/predict/">
+                {% csrf_token %}
+                <div class="row">
+                    <!-- Temperature & Humidity Parameters -->
+                    <div class="col-md-6">
+                        <div class="form-section">
+                            <h5 class="section-title">
+                                <i class="fas fa-thermometer-half"></i>
+                                Temperature & Humidity
+                            </h5>
+                              <div class="form-group">
+                                <label for="temperature" class="form-label">Temperature (°C)</label>
+                                <input type="number" class="form-control" id="temperature" 
+                                       min="-20" max="50" step="0.1" placeholder="Enter temperature" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="feels_like_max" class="form-label">Feels Like Max (°C)</label>
+                                <input type="number" class="form-control" id="feels_like_max" 
+                                       min="-20" max="60" step="0.1" placeholder="Enter feels like max" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="dew_point" class="form-label">Dew Point (°C)</label>
+                                <input type="number" class="form-control" id="dew_point" 
+                                       min="-30" max="40" step="0.1" placeholder="Enter dew point" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="humidity" class="form-label">Humidity (%)</label>
+                                <input type="number" class="form-control" id="humidity" 
+                                       min="0" max="100" step="0.1" placeholder="Enter humidity" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="cloud_cover" class="form-label">Cloud Cover (%)</label>
+                                <input type="number" class="form-control" id="cloud_cover" 
+                                       min="0" max="100" step="0.1" placeholder="Enter cloud cover" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pressure & Wind Parameters -->
+                    <div class="col-md-6">
+                        <div class="form-section">
+                            <h5 class="section-title">
+                                <i class="fas fa-wind"></i>
+                                Pressure & Wind
+                            </h5>
+                              <div class="form-group">
+                                <label for="sea_level_pressure" class="form-label">Pressure (inHg)</label>
+                                <input type="number" class="form-control" id="sea_level_pressure" 
+                                       min="28" max="32" step="0.01" placeholder="Enter pressure" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="wind_speed" class="form-label">Wind Speed (mph)</label>
+                                <input type="number" class="form-control" id="wind_speed" 
+                                       min="0" max="100" step="0.1" placeholder="Enter wind speed" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="wind_direction" class="form-label">Wind Direction (degrees)</label>
+                                <input type="number" class="form-control" id="wind_direction" 
+                                       min="0" max="360" step="1" placeholder="Enter wind direction" required>
+                            </div>
+                              <div class="form-group">
+                                <label for="wind_gust" class="form-label">Wind Gust (mph)</label>
+                                <input type="number" class="form-control" id="wind_gust" 
+                                       min="0" max="150" step="0.1" placeholder="Enter wind gust" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="visibility" class="form-label">Visibility (miles)</label>
+                                <input type="number" class="form-control" id="visibility" 
+                                       min="0" max="50" step="0.1" placeholder="Enter visibility" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                  <div class="text-center mt-4">                    <button type="button" class="btn btn-outline-secondary me-2" id="fillDemo" onclick="fillRandomData()">
+                        <i class="fas fa-dice me-2"></i>Random Data
+                    </button>                    <button type="button" class="btn-predict" id="predictButton">
+                        <i class="fas fa-brain me-2"></i>Predict Rain
+                    </button>
+                    <button type="button" class="btn btn-outline-danger ms-2" id="clearResults">
+                        <i class="fas fa-eraser me-2"></i>Clear
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Results Section -->
+        <div class="container mt-5 results-section" style="display: none;">
+        <div class="glass-card">
+            <h3 class="section-title">
+                <i class="fas fa-chart-bar"></i>
+                Prediction Results
+            </h3>
+            
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <div class="metric-card">
+                        <div class="metric-value" id="probabilityValue">--</div>
+                        <div class="metric-label">Rain Probability</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="metric-card">
+                        <div class="metric-value" id="predictionValue">--</div>
+                        <div class="metric-label">Prediction</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="metric-card">
+                        <div class="metric-value" id="confidenceValue">--</div>
+                        <div class="metric-label">Confidence</div>
+                        <div class="confidence-progress">
+                            <div class="progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>                </div>
+            
+            <!-- Recommendation Section -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="alert alert-info" role="alert">
+                        <h6 class="alert-heading"><i class="fas fa-lightbulb me-2"></i>Recommendation</h6>
+                        <p id="recommendationText" class="mb-0">Complete the prediction to get weather recommendations.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <button type="button" class="btn btn-outline-success" id="exportResults">
+                    <i class="fas fa-download me-2"></i>Export Results
+                </button>
+                <button type="button" class="btn btn-outline-danger ms-2" id="clearResults">
+                    <i class="fas fa-trash me-2"></i>Clear Results
+                </button>
+            </div>
+        </div>
+    </div>    <!-- Prediction History Section -->
+    <div class="glass-card">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="section-title mb-0">
+                <i class="fas fa-history"></i>
+                Prediction History
+            </h4>
+            <div>
+                <button type="button" class="btn btn-outline-primary btn-sm" id="refreshHistory">
+                    <i class="fas fa-sync-alt me-1"></i>Refresh
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="clearHistory">
+                    <i class="fas fa-trash me-1"></i>Clear All
+                </button>
+            </div>
+        </div>
+        
+        <div id="historyContainer">
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 text-muted">Loading prediction history...</p>
+            </div>
+        </div>
+        
+        <div id="historyStats" class="mt-3" style="display: none;">
+            <div class="row text-center">
+                <div class="col-4">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalPredictions">0</div>
+                        <div class="stat-label">Total Predictions</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="stat-item">
+                        <div class="stat-value" id="rainPredictions">0</div>
+                        <div class="stat-label">Rain Predicted</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="stat-item">
+                        <div class="stat-value" id="avgConfidence">0%</div>
+                        <div class="stat-label">Avg Confidence</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model Information -->
+    <div class="glass-card">
+        <div class="model-info">
+            <h4 class="section-title">
+                <i class="fas fa-brain"></i>
+                Model Information
+            </h4>
+            <div class="info-item">
+                <span class="info-label">Model Type:</span>
+                <span class="info-value">3-Layer Neural Network</span>
+            </div>                <div class="info-item">
+                <span class="info-label">Input Features:</span>
+                <span class="info-value">10 Weather Parameters</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Architecture:</span>
+                <span class="info-value">Dense → Sigmoid → Dense → Sigmoid → Dense → Sigmoid</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Prediction History -->
+    <div class="glass-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="section-title">
+                <i class="fas fa-history"></i>
+                Recent Predictions
+            </h4>
+            <button type="button" class="btn btn-outline-primary btn-sm" id="refreshHistory">
+                <i class="fas fa-sync-alt me-1"></i>Refresh
+            </button>
+        </div>
+        
+        <div class="history-table">
+            <table class="table table-hover" id="historyTable">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Temperature</th>
+                        <th>Humidity</th>
+                        <th>Pressure</th>
+                        <th>Wind Speed</th>
+                        <th>Prediction</th>
+                        <th>Probability</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">No predictions yet</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+</div>
+</div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3"></div>    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Simple Random Data Function -->
+    <script>
+        // Simple standalone random data function
+        function fillRandomData() {
+            console.log('fillRandomData called directly from HTML');
+            
+            // Random number generators
+            function getRandomFloat(min, max, decimals = 1) {
+                return parseFloat((Math.random() * (max - min) + min).toFixed(decimals));
+            }
+            
+            function getRandomInt(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+            
+            // Generate realistic weather data for Cambodia
+            const weatherData = {
+                temperature: getRandomFloat(25, 35),
+                feels_like_max: getRandomFloat(28, 40),
+                dew_point: getRandomFloat(18, 28),
+                humidity: getRandomFloat(65, 90),
+                sea_level_pressure: getRandomFloat(29.7, 30.3, 2),
+                wind_speed: getRandomFloat(3, 18),
+                wind_direction: getRandomInt(0, 360),
+                cloud_cover: getRandomFloat(15, 85),
+                wind_gust: getRandomFloat(5, 25),
+                visibility: getRandomFloat(8, 20)
+            };
+            
+            console.log('Generated weather data:', weatherData);
+            
+            // Get the button and show feedback
+            const button = document.getElementById('fillDemo');
+            if (button) {
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Filling...';
+                button.disabled = true;
+                
+                // Fill form fields with slight delay for visual effect
+                setTimeout(() => {
+                    let fieldsSet = 0;
+                    
+                    Object.keys(weatherData).forEach((fieldName, index) => {
+                        const input = document.getElementById(fieldName);
+                        if (input) {
+                            setTimeout(() => {
+                                input.value = weatherData[fieldName];
+                                
+                                // Add visual feedback
+                                input.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
+                                input.style.borderColor = '#28a745';
+                                input.style.transition = 'all 0.3s ease';
+                                
+                                // Remove visual feedback after 1 second
+                                setTimeout(() => {
+                                    input.style.backgroundColor = '';
+                                    input.style.borderColor = '';
+                                }, 1000);
+                                
+                                console.log(`Set ${fieldName} = ${weatherData[fieldName]}`);
+                                fieldsSet++;
+                                  // When all fields are set, reset button
+                                if (fieldsSet === Object.keys(weatherData).length) {
+                                    setTimeout(() => {
+                                        button.innerHTML = originalText;
+                                        button.disabled = false;
+                                        
+                                        // Silent success - no alert popup
+                                        console.log('✅ Random weather data filled successfully!');
+                                    }, 200);
+                                }
+                            }, index * 100); // Stagger the field filling
+                        } else {
+                            console.warn(`Field not found: ${fieldName}`);
+                            fieldsSet++;
+                        }
+                    });
+                }, 300);            } else {
+                console.error('Button not found');
+                // Silent error - no alert popup
+                console.log('❌ Error: Button not found');
+            }
+        }
+        
+        // Test function to verify it works
+        function testRandomData() {
+            console.log('Testing random data function...');
+            fillRandomData();
+        }        // Make sure function is available globally
+        window.fillRandomData = fillRandomData;
+        window.testRandomData = testRandomData;
+        
+        console.log('Random data functions loaded successfully');        // Enhanced Weather Animation
+        function enhanceWeatherAnimation() {
+            const weatherAnimation = document.querySelector('.weather-animation');
+            const clouds = document.querySelectorAll('.cloud');
+            const raindrops = document.querySelectorAll('.raindrop');
+            
+            if (!weatherAnimation) return;
+            
+            console.log('Enhancing weather animation...');
+            
+            // Add dynamic particle background
+            createParticleBackground();
+            
+            // Add hover effects to the weather animation container
+            weatherAnimation.addEventListener('mouseenter', function() {
+                // Speed up animations on hover
+                clouds.forEach((cloud, index) => {
+                    cloud.style.animationDuration = '3s';
+                    cloud.style.transform = 'scale(1.1)';
+                });
+                
+                raindrops.forEach((raindrop, index) => {
+                    raindrop.style.animationDuration = '1.2s';
+                });
+                
+                // Add interactive glow effect
+                weatherAnimation.style.boxShadow = `
+                    0 15px 45px rgba(0, 0, 0, 0.15),
+                    0 0 50px rgba(37, 99, 235, 0.3),
+                    inset 0 1px 2px rgba(255, 255, 255, 0.9)
+                `;
+            });
+            
+            weatherAnimation.addEventListener('mouseleave', function() {
+                // Reset animation speeds
+                clouds.forEach((cloud, index) => {
+                    cloud.style.animationDuration = index === 0 ? '5s' : '7s';
+                    cloud.style.transform = '';
+                });
+                
+                raindrops.forEach((raindrop, index) => {
+                    raindrop.style.animationDuration = '2s';
+                });
+                
+                // Reset glow effect
+                weatherAnimation.style.boxShadow = '';
+            });
+            
+            // Add click effect to create rain burst
+            weatherAnimation.addEventListener('click', function(e) {
+                createRainBurst(e.offsetX, e.offsetY);
+            });
+            
+            // Add periodic intensity changes
+            let animationIntensity = 1;
+            setInterval(() => {
+                animationIntensity = animationIntensity === 1 ? 1.3 : 1;
+                
+                raindrops.forEach((raindrop, index) => {
+                    const baseDelay = index * 0.3;
+                    raindrop.style.animationDelay = (baseDelay / animationIntensity) + 's';
+                });
+                
+                // Periodically change background colors
+                const randomColors = [
+                    'rgba(37, 99, 235, 0.06)',
+                    'rgba(6, 182, 212, 0.06)',
+                    'rgba(16, 185, 129, 0.06)',
+                    'rgba(139, 92, 246, 0.06)',
+                    'rgba(236, 72, 153, 0.06)'
+                ];
+                
+                const randomColor = randomColors[Math.floor(Math.random() * randomColors.length)];
+                weatherAnimation.style.background = `rgba(255, 255, 255, 0.95)`;
+                weatherAnimation.style.borderColor = randomColor;
+            }, 10000);
+            
+            console.log('Weather animation enhancements applied');
+        }
+
+        // Create animated particle background
+        function createParticleBackground() {
+            const heroSection = document.querySelector('.hero-section');
+            if (!heroSection) return;
+            
+            // Create particle container
+            const particleContainer = document.createElement('div');
+            particleContainer.className = 'particle-container';
+            particleContainer.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                pointer-events: none;
+                z-index: 1;
+                overflow: hidden;
+            `;
+            
+            // Create floating particles
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'floating-particle';
+                
+                const size = Math.random() * 6 + 2;
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const duration = Math.random() * 20 + 15;
+                const delay = Math.random() * 5;
+                
+                const colors = [
+                    'rgba(37, 99, 235, 0.4)',
+                    'rgba(6, 182, 212, 0.4)',
+                    'rgba(16, 185, 129, 0.4)',
+                    'rgba(139, 92, 246, 0.4)',
+                    'rgba(236, 72, 153, 0.4)'
+                ];
+                
+                particle.style.cssText = `
+                    position: absolute;
+                    width: ${size}px;
+                    height: ${size}px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    border-radius: 50%;
+                    left: ${x}%;
+                    top: ${y}%;
+                    animation: particleFloat ${duration}s ease-in-out infinite ${delay}s;
+                    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+                `;
+                
+                particleContainer.appendChild(particle);
+            }
+            
+            heroSection.appendChild(particleContainer);
+            
+            // Add particle animation keyframes dynamically
+            if (!document.getElementById('particle-styles')) {
+                const style = document.createElement('style');
+                style.id = 'particle-styles';
+                style.textContent = `
+                    @keyframes particleFloat {
+                        0%, 100% {
+                            transform: translateY(0px) translateX(0px) scale(1);
+                            opacity: 0.7;
+                        }
+                        25% {
+                            transform: translateY(-20px) translateX(10px) scale(1.1);
+                            opacity: 1;
+                        }
+                        50% {
+                            transform: translateY(-40px) translateX(-5px) scale(0.9);
+                            opacity: 0.8;
+                        }
+                        75% {
+                            transform: translateY(-30px) translateX(15px) scale(1.05);
+                            opacity: 1;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // Create rain burst effect on click
+        function createRainBurst(x, y) {
+            const weatherAnimation = document.querySelector('.weather-animation');
+            if (!weatherAnimation) return;
+            
+            // Create burst particles
+            for (let i = 0; i < 8; i++) {
+                const burstDrop = document.createElement('div');
+                burstDrop.style.cssText = `
+                    position: absolute;
+                    width: 3px;
+                    height: 15px;
+                    background: linear-gradient(180deg, rgba(6, 182, 212, 0.9) 0%, rgba(8, 145, 178, 1) 100%);
+                    border-radius: 0 0 50% 50%;
+                    left: ${x}px;
+                    top: ${y}px;
+                    z-index: 10;
+                    pointer-events: none;
+                    animation: burstRain 1s ease-out forwards;
+                    transform-origin: center;
+                `;
+                
+                // Random direction for burst
+                const angle = (i * 45) + (Math.random() * 30 - 15);
+                const distance = 30 + Math.random() * 40;
+                
+                burstDrop.style.setProperty('--burst-x', Math.cos(angle * Math.PI / 180) * distance + 'px');
+                burstDrop.style.setProperty('--burst-y', Math.sin(angle * Math.PI / 180) * distance + 'px');
+                
+                weatherAnimation.appendChild(burstDrop);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    if (burstDrop.parentNode) {
+                        burstDrop.parentNode.removeChild(burstDrop);
+                    }
+                }, 1000);
+            }
+            
+            // Add burst animation if not exists
+            if (!document.getElementById('burst-styles')) {
+                const style = document.createElement('style');
+                style.id = 'burst-styles';
+                style.textContent = `
+                    @keyframes burstRain {
+                        0% {
+                            transform: translate(0, 0) scale(1);
+                            opacity: 1;
+                        }
+                        100% {
+                            transform: translate(var(--burst-x), var(--burst-y)) scale(0.5);
+                            opacity: 0;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // Enhanced hero section background animation
+        function enhanceHeroBackground() {
+            const heroSection = document.querySelector('.hero-section');
+            if (!heroSection) return;
+            
+            // Add mouse move effect
+            heroSection.addEventListener('mousemove', function(e) {
+                const rect = heroSection.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                
+                // Update CSS custom properties for dynamic gradients
+                heroSection.style.setProperty('--mouse-x', x + '%');
+                heroSection.style.setProperty('--mouse-y', y + '%');
+                
+                // Create subtle background shift
+                const beforeElement = window.getComputedStyle(heroSection, '::before');
+                heroSection.style.background = `
+                    radial-gradient(circle at ${x}% ${y}%, rgba(37, 99, 235, 0.1) 0%, transparent 50%),
+                    linear-gradient(135deg, #ffffff 0%, #f8fafc 35%, #f1f5f9 100%)
+                `;
+            });
+            
+            // Reset on mouse leave
+            heroSection.addEventListener('mouseleave', function() {
+                heroSection.style.background = 'linear-gradient(135deg, #ffffff 0%, #f8fafc 35%, #f1f5f9 100%)';
+            });
+        }        // Initialize enhanced animations when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎨 Initializing enhanced animations...');
+            
+            // Enhanced weather animation
+            setTimeout(() => {
+                enhanceWeatherAnimation();
+            }, 1000);
+            
+            // Enhanced hero background
+            setTimeout(() => {
+                enhanceHeroBackground();
+            }, 1500);
+            
+            // Add subtle scroll effects
+            window.addEventListener('scroll', function() {
+                const heroSection = document.querySelector('.hero-section');
+                if (heroSection) {
+                    const scrolled = window.pageYOffset;
+                    const parallax = scrolled * 0.3;
+                    
+                    heroSection.style.transform = `translateY(${parallax}px)`;
+                }
+            });
+            
+            // Add periodic color cycling to hero elements
+            setInterval(() => {
+                const heroTitle = document.querySelector('.hero-title');
+                const heroStats = document.querySelectorAll('.hero-stat');
+                
+                if (heroTitle) {
+                    // Cycle through different gradient combinations
+                    const gradients = [
+                        'linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 50%, #1e40af 100%)',
+                        'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%)',
+                        'linear-gradient(135deg, #06b6d4 0%, #10b981 50%, #059669 100%)',
+                        'linear-gradient(135deg, #f59e0b 0%, #ef4444 50%, #dc2626 100%)'
+                    ];
+                    
+                    const randomGradient = gradients[Math.floor(Math.random() * gradients.length)];
+                    heroTitle.style.background = randomGradient;
+                    heroTitle.style.webkitBackgroundClip = 'text';
+                    heroTitle.style.webkitTextFillColor = 'transparent';
+                    heroTitle.style.backgroundClip = 'text';
+                }
+                
+                // Add subtle glow to stats
+                heroStats.forEach((stat, index) => {
+                    setTimeout(() => {
+                        stat.style.boxShadow = '0 8px 25px rgba(37, 99, 235, 0.15), 0 0 20px rgba(6, 182, 212, 0.1)';
+                        
+                        setTimeout(() => {
+                            stat.style.boxShadow = '';
+                        }, 2000);
+                    }, index * 500);
+                });
+            }, 15000); // Change every 15 seconds
+            
+            console.log('✨ Enhanced animations initialized successfully!');
+        });
+
+        // Clear button functionality
+        function clearForm() {
+            console.log('Clearing form...');
+            
+            // List of all form field IDs
+            const fieldIds = [
+                'temperature', 'feels_like_max', 'dew_point', 'humidity', 'cloud_cover',
+                'sea_level_pressure', 'wind_speed', 'wind_direction', 'wind_gust', 'visibility'
+            ];
+            
+            // Clear all form fields
+            fieldIds.forEach(fieldId => {
+                const input = document.getElementById(fieldId);
+                if (input) {
+                    input.value = '';
+                    
+                    // Add visual feedback
+                    input.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                    input.style.borderColor = '#ef4444';
+                    input.style.transition = 'all 0.3s ease';
+                    
+                    // Remove visual feedback after 1 second
+                    setTimeout(() => {
+                        input.style.backgroundColor = '';
+                        input.style.borderColor = '';
+                    }, 1000);
+                }
+            });
+            
+            // Hide results section if visible
+            const resultsSection = document.querySelector('.results-section');
+            if (resultsSection) {
+                resultsSection.style.display = 'none';
+                resultsSection.classList.remove('show');
+            }
+              // Clear any displayed results
+            const probabilityValue = document.getElementById('probabilityValue');
+            const predictionValue = document.getElementById('predictionValue');
+            const confidenceValue = document.getElementById('confidenceValue');
+            const progressBar = document.querySelector('.confidence-progress .progress-bar');
+            const recommendationText = document.getElementById('recommendationText');
+            
+            if (probabilityValue) probabilityValue.textContent = '--';
+            if (predictionValue) predictionValue.textContent = '--';
+            if (confidenceValue) confidenceValue.textContent = '--';
+            if (progressBar) progressBar.style.width = '0%';
+            if (recommendationText) recommendationText.textContent = 'Complete the prediction to get weather recommendations.';
+            
+            console.log('✅ Form cleared successfully!');
+        }
+        
+        // Add event listener for clear button when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const clearButton = document.getElementById('clearResults');
+            if (clearButton) {
+                clearButton.addEventListener('click', clearForm);
+                console.log('Clear button event listener added');
+            } else {
+                console.warn('Clear button not found');
+            }
+        });
+          // Make clear function available globally
+        window.clearForm = clearForm;
+
+        // Form submission handler
+        function handlePredictionSubmit() {
+            console.log('=== PREDICTION FORM SUBMISSION ===');
+            
+            // Collect form data
+            const formData = {
+                temperature: parseFloat(document.getElementById('temperature').value),
+                feels_like_max: parseFloat(document.getElementById('feels_like_max').value),
+                dew_point: parseFloat(document.getElementById('dew_point').value),
+                humidity: parseFloat(document.getElementById('humidity').value),
+                cloud_cover: parseFloat(document.getElementById('cloud_cover').value),
+                sea_level_pressure: parseFloat(document.getElementById('sea_level_pressure').value),
+                wind_speed: parseFloat(document.getElementById('wind_speed').value),
+                wind_direction: parseFloat(document.getElementById('wind_direction').value),
+                wind_gust: parseFloat(document.getElementById('wind_gust').value),
+                visibility: parseFloat(document.getElementById('visibility').value)
+            };
+            
+            console.log('Form data:', formData);
+            
+            // Validate all fields have values
+            const hasNaN = Object.values(formData).some(val => isNaN(val));
+            if (hasNaN) {
+                alert('Please fill all fields with valid numbers');
+                return;
+            }
+            
+            // Get CSRF token
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            console.log('CSRF Token found:', !!csrfToken);
+            
+            // Update button state
+            const predictBtn = document.getElementById('predictButton');
+            const originalText = predictBtn.innerHTML;
+            predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Predicting...';
+            predictBtn.disabled = true;
+            
+            // Make API call using fetch
+            fetch('/api/predict/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Prediction successful:', data);
+                
+                // Show results section
+                const resultsSection = document.querySelector('.results-section');
+                if (resultsSection) {
+                    resultsSection.style.display = 'block';
+                    resultsSection.classList.add('show');
+                }
+                  // Update UI with results
+                document.getElementById('probabilityValue').textContent = Math.round(data.rain_probability) + '%';
+                document.getElementById('predictionValue').textContent = data.prediction_result;
+                document.getElementById('confidenceValue').textContent = Math.round(data.confidence) + '%';
+                
+                // Update progress bar
+                const progressBar = document.querySelector('.confidence-progress .progress-bar');
+                if (progressBar) {
+                    progressBar.style.width = Math.round(data.confidence) + '%';
+                }
+                
+                // Update recommendation
+                const recommendationText = document.getElementById('recommendationText');
+                if (recommendationText) {
+                    recommendationText.textContent = data.recommendation;
+                }
+                
+                console.log('✅ Prediction completed successfully!');
+                
+                // Reload prediction history to show the new prediction
+                setTimeout(() => {
+                    loadPredictionHistory();
+                }, 1000);
+            })
+            .catch(error => {
+                console.error('Prediction failed:', error);
+                alert('Prediction failed: ' + error.message);
+            })
+            .finally(() => {
+                // Reset button
+                predictBtn.innerHTML = originalText;
+                predictBtn.disabled = false;
+            });
+        }
+        
+        // Add event listeners when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Clear button listener (already exists above)
+            const clearButton = document.getElementById('clearResults');
+            if (clearButton) {
+                clearButton.addEventListener('click', clearForm);
+                console.log('Clear button event listener added');
+            } else {
+                console.warn('Clear button not found');
+            }
+            
+            // Predict button listener
+            const predictButton = document.getElementById('predictButton');
+            if (predictButton) {
+                predictButton.addEventListener('click', handlePredictionSubmit);
+                console.log('Predict button event listener added');
+            } else {
+                console.warn('Predict button not found');
+            }
+            
+            // Form submit listener (prevent default form submission)
+            const form = document.getElementById('predictionForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    console.log('Form submission prevented, using JavaScript handler');
+                    handlePredictionSubmit();
+                });
+                console.log('Form submit event listener added');            } else {
+                console.warn('Form not found');
+            }
+            
+            // Load prediction history when page loads
+            loadPredictionHistory();
+        });
+        
+        // Prediction History Management
+        function loadPredictionHistory() {
+            console.log('Loading prediction history...');
+            
+            const historyContainer = document.getElementById('historyContainer');
+            const historyStats = document.getElementById('historyStats');
+            
+            // Show loading state
+            if (historyContainer) {
+                historyContainer.innerHTML = `
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Loading prediction history...</p>
+                    </div>
+                `;
+            }
+            
+            // Fetch history from API
+            fetch('/api/history/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('History loaded:', data);
+                displayPredictionHistory(data);
+                updateHistoryStats(data);
+            })
+            .catch(error => {
+                console.error('Failed to load history:', error);
+                if (historyContainer) {
+                    historyContainer.innerHTML = `
+                        <div class="text-center py-4">
+                            <div class="alert alert-warning" role="alert">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Unable to load prediction history. This may be normal for a new installation.
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+          function displayPredictionHistory(predictions) {
+            const historyContainer = document.getElementById('historyContainer');
+            const historyTable = document.getElementById('historyTable');
+            
+            console.log('Displaying history. Container found:', !!historyContainer, 'Table found:', !!historyTable);
+            console.log('Predictions data:', predictions);
+            
+            // Update the historyContainer first
+            if (historyContainer) {
+                if (predictions.length === 0) {
+                    historyContainer.innerHTML = `
+                        <div class="text-center py-4">
+                            <div class="alert alert-info" role="alert">
+                                <i class="fas fa-info-circle me-2"></i>
+                                No predictions yet. Make your first prediction above!
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Create a table in historyContainer
+                    const recentPredictions = predictions.slice(0, 10);
+                    historyContainer.innerHTML = `
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Date & Time</th>
+                                        <th>Temperature</th>
+                                        <th>Humidity</th>
+                                        <th>Pressure</th>
+                                        <th>Wind Speed</th>
+                                        <th>Prediction</th>
+                                        <th>Probability</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${recentPredictions.map(pred => `
+                                        <tr>
+                                            <td>${pred.created_at}</td>
+                                            <td>${pred.temperature}°C</td>
+                                            <td>${pred.humidity}%</td>
+                                            <td>${pred.sea_level_pressure} inHg</td>
+                                            <td>${pred.wind_speed} mph</td>
+                                            <td>
+                                                <span class="badge ${pred.prediction_result === 'Rain Expected' ? 'bg-primary' : 'bg-success'}">
+                                                    ${pred.prediction_result}
+                                                </span>
+                                            </td>
+                                            <td>${Math.round(pred.rain_probability)}%</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Also update the historyTable if it exists
+            if (historyTable) {
+                const tbody = historyTable.querySelector('tbody');
+                if (tbody) {
+                    if (predictions.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">No predictions yet</td>
+                            </tr>
+                        `;
+                    } else {
+                        const recentPredictions = predictions.slice(0, 10);
+                        tbody.innerHTML = recentPredictions.map(pred => `
+                            <tr>
+                                <td>${pred.created_at}</td>
+                                <td>${pred.temperature}°C</td>
+                                <td>${pred.humidity}%</td>
+                                <td>${pred.sea_level_pressure} inHg</td>
+                                <td>${pred.wind_speed} mph</td>
+                                <td>
+                                    <span class="badge ${pred.prediction_result === 'Rain Expected' ? 'bg-primary' : 'bg-success'}">
+                                        ${pred.prediction_result}
+                                    </span>
+                                </td>
+                                <td>${Math.round(pred.rain_probability)}%</td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+            }
+        }
+        
+        function updateHistoryStats(predictions) {
+            const historyStats = document.getElementById('historyStats');
+            if (!historyStats) return;
+            
+            const totalPredictions = predictions.length;
+            const rainPredictions = predictions.filter(p => p.prediction_result === 'Rain Expected').length;
+            const avgConfidence = totalPredictions > 0 
+                ? Math.round(predictions.reduce((sum, p) => sum + p.rain_probability, 0) / totalPredictions)
+                : 0;
+            
+            // Update stats display
+            const totalElement = document.getElementById('totalPredictions');
+            const rainElement = document.getElementById('rainPredictions');
+            const avgElement = document.getElementById('avgConfidence');
+            
+            if (totalElement) totalElement.textContent = totalPredictions;
+            if (rainElement) rainElement.textContent = rainPredictions;
+            if (avgElement) avgElement.textContent = avgConfidence + '%';
+            
+            // Show stats if we have data
+            if (totalPredictions > 0) {
+                historyStats.style.display = 'block';
+            }
+        }
+        
+        // Refresh history button
+        function refreshHistory() {
+            console.log('Refreshing prediction history...');
+            loadPredictionHistory();
+        }
+        
+        // Clear history button
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear all prediction history? This action cannot be undone.')) {
+                // Note: This would require a DELETE endpoint on the backend
+                alert('Clear history functionality would require backend implementation.');
+            }
+        }
+        
+        // Export results functionality
+        function exportResults() {
+            const results = {
+                timestamp: new Date().toISOString(),
+                probability: document.getElementById('probabilityValue')?.textContent || '--',
+                prediction: document.getElementById('predictionValue')?.textContent || '--',
+                confidence: document.getElementById('confidenceValue')?.textContent || '--',
+                recommendation: document.getElementById('recommendationText')?.textContent || '--'
+            };
+            
+            const dataStr = JSON.stringify(results, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `weather_prediction_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Add event listeners for additional buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            // Existing listeners are above...
+            
+            // History refresh button
+            const refreshBtn = document.getElementById('refreshHistory');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', refreshHistory);
+            }
+            
+            // History clear button
+            const clearHistoryBtn = document.getElementById('clearHistory');
+            if (clearHistoryBtn) {
+                clearHistoryBtn.addEventListener('click', clearHistory);
+            }
+            
+            // Export results button
+            const exportBtn = document.getElementById('exportResults');
+            if (exportBtn) {
+                exportBtn.addEventListener('click', exportResults);
+            }
+        });
+    </script>
+</body>
+</html>
